@@ -1,4 +1,9 @@
 {
+    "name": "vendimia/project",
+    "description": "Vendimia skeleton project",
+    "license": "GPL-3.0-or-later",
+    "keywords": ["php", "vendimia"],
+
     "autoload": {
         "psr-4": {
             "": ["modules/", "base/"]
