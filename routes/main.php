@@ -5,5 +5,7 @@ use Vendimia\Http\{Request, Response};
 use Vendimia\Core\AssetManager;
 
 return [
-    Rule::default()->view('::welcome'),
+
+    // Change this rule for your default view or controller
+    Rule::default()->view('welcome'),
 ];
