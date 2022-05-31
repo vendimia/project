@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-<base href="<?=$this->getWebRoot()?>" />
-<title><?=$this->getTitle() ?? $this->project->module?></title>
-<?=$this->renderMetaTags()?>
-<?=$this->renderLinkTags()?>
-<?=$this->renderScriptTags()?>
-</head>
+<?php $this->includeLayout('default-html-head')?>
 <body>
 <?=$this->insertContent()?>
 <footer style="font-family: sans-serif; position: fixed; bottom: 3px; right: 3px; font-size: 10px; color: #aaa; text-align: center; font-variant: small-caps">
