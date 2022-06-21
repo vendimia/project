@@ -39,6 +39,15 @@ define ('Vendimia\\DEBUG', $config->get("debug", false));
 // Save project info in the object repository
 $project_info = $object->build(Vendimia\Core\ProjectInfo::class);
 
+// By default, CLI exception handler are used, in case there is an error
+// at initializing phase.
+set_exception_handler([Vendimia\Core\ExceptionHandler\Cli::class, 'handle']);
+
+// Treat all error as exceptions
+set_error_handler(function($severity, $message, $file, $line) {
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
+
 // Build and save the Vendimia resource locator class
 $resource_locator = $object->save(
     $object->new(Vendimia\Core\ResourceLocator::class),
@@ -52,6 +61,8 @@ $object->bind(
 );
 $session = $object->build(Vendimia\Session\SessionManager::class);
 
+// CSRF token
+$object->build(Vendimia\Core\Csrf::class);
 
 // Database
 if ($config->database) {
@@ -67,16 +78,28 @@ if ($config->database) {
     );
 }
 
+// Error and exception handlers
+set_exception_handler([Vendimia\Core\ExceptionHandler\Web::class, 'handle']);
+set_error_handler(function($severity, $message, $file, $line) {
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
+
+
 // ===========================================================================//
 //                       VENDIMIA INITIALIZATION COMPLETE                     //
 // ===========================================================================//
 
-
 if (PHP_SAPI == 'cli') {
-    // Cambuamos de exception handler
-    //set_exception_handler([ControladorErrores::class, 'cli']);
-
     return;
+}
+
+// If the request ACCEPTs a application/json, o content-type is application/json,
+// use the Json exception handler
+if (str_contains(strtolower($request->getHeaderLine('accept')), 'application/json') ||
+    $request->getHeaderLine('content-type') == 'application/json') {
+    set_exception_handler([Vendimia\Core\ExceptionHandler\Json::class, 'handle']);
+} else {
+    set_exception_handler([Vendimia\Core\ExceptionHandler\Web::class, 'handle']);
 }
 
 
