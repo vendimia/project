@@ -106,6 +106,21 @@ if (str_contains(strtolower($request->getHeaderLine('accept')), 'application/jso
 // Create and save the HTTP request in the object repository
 $request = $object->save(Vendimia\Http\Request::fromPHP());
 
+if (PHP_SAPI == 'cli-server') {
+    $path = trim($request->getUri()->getPath(), ' /');
+
+    // Si la ruta pública está dentro de Vendimia\WEB_ROOT, y es la solicitada,
+    // retornamos false para que sea procesado directo por cli-server
+    if (str_starts_with(Vendimia\PUBLIC_URL, Vendimia\WEB_ROOT)) {
+        $public_url_path = trim(substr(Vendimia\PUBLIC_URL, strlen(Vendimia\WEB_ROOT)), '/');
+
+        if (str_starts_with($path, $public_url_path)) {
+            return false;
+        }
+    }
+}
+
+
 $middleware_queue = $object->new(
     Vendimia\Middleware\QueueHandler::class
 );
