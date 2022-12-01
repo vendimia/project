@@ -4,6 +4,7 @@
  * Vendimia bootstrap script.
  */
 
+// Project path
 define ('Vendimia\\PROJECT_PATH', __DIR__);
 
 // Project environment
@@ -14,9 +15,11 @@ define ('Vendimia\\ENVIRONMENT',
 define ('Vendimia\\WEB_ROOT',
     $_ENV['VENDIMIA_WEB_ROOT'] ?? '/');
 
+// Path for public files reached using PUBLIC_URL
 define ('Vendimia\\PUBLIC_PATH',
     $_ENV['VENDIMIA_PUBLIC_PATH'] ?? __DIR__ . '/public');
 
+// URL for public files
 define ('Vendimia\\PUBLIC_URL',
     $_ENV['VENDIMIA_PUBLIC_URL'] ?? Vendimia\WEB_ROOT . '/public');
 
@@ -33,7 +36,7 @@ $object = new Vendimia\ObjectManager\ObjectManager;
 $config = $object->build(Vendimia\Core\Config::class);
 $config->addFile(Vendimia\PROJECT_PATH . '/config/default.php');
 
-// Create a constant with the debug value
+// Create a constant with the debug value from the configste
 define ('Vendimia\\DEBUG', $config->get("debug", false));
 
 // Save project info in the object repository
@@ -64,19 +67,33 @@ if ($config->logger) {
 //                    DEFAULT ERROR AND EXCEPTION HANDLER                     //
 // ========================================================================== //
 
+// By default, CLI exception handler is used, in case there is an error
 // at initializing phase.
-set_exception_handler([Vendimia\Core\ExceptionHandler\Cli::class, 'handle']);
+$exception_handler = new Vendimia\Core\ExceptionHandler\ExceptionHandler(
+    new Vendimia\Core\ExceptionHandler\Cli
+);
+set_exception_handler($exception_handler);
 
 // Treat all error as exceptions
 set_error_handler(function($severity, $message, $file, $line) {
     throw new ErrorException($message, 0, $severity, $file, $line);
 });
 
+// Adds the default logger to the exception handler.
+if ($logger) {
+    $exception_handler->setLogger($logger);
+}
+
+
+
 // Build and save the Vendimia resource locator class
 $resource_locator = $object->save(
     $object->new(Vendimia\Core\ResourceLocator::class),
     Vendimia\Interface\Path\ResourceLocatorInterface::class,
 );
+
+// Add this resource locator to Ruler class
+Vendimia\Routing\Rule::setResourceLocator($resource_locator);
 
 // Session manager
 $object->bind(
@@ -102,33 +119,27 @@ if ($config->database) {
     );
 }
 
-// Error and exception handlers
-set_exception_handler([Vendimia\Core\ExceptionHandler\Web::class, 'handle']);
-set_error_handler(function($severity, $message, $file, $line) {
-    throw new ErrorException($message, 0, $severity, $file, $line);
-});
 
 
-// ===========================================================================//
-//                       VENDIMIA INITIALIZATION COMPLETE                     //
-// ===========================================================================//
+// ========================================================================== //
+//                      VENDIMIA INITIALIZATION COMPLETE                      //
+// ========================================================================== //
 
 if (PHP_SAPI == 'cli') {
     return;
 }
 
+// Create and save the HTTP request in the object repository
+$request = $object->save(Vendimia\Http\Request::fromPHP());
+
 // If the request ACCEPTs a application/json, o content-type is application/json,
 // use the Json exception handler
 if (str_contains(strtolower($request->getHeaderLine('accept')), 'application/json') ||
     $request->getHeaderLine('content-type') == 'application/json') {
-    set_exception_handler([Vendimia\Core\ExceptionHandler\Json::class, 'handle']);
+    $exception_handler->setHandler(new Vendimia\Core\ExceptionHandler\Json);
 } else {
-    set_exception_handler([Vendimia\Core\ExceptionHandler\Web::class, 'handle']);
+    $exception_handler->setHandler(new Vendimia\Core\ExceptionHandler\Web);
 }
-
-
-// Create and save the HTTP request in the object repository
-$request = $object->save(Vendimia\Http\Request::fromPHP());
 
 if (PHP_SAPI == 'cli-server') {
     $path = trim($request->getUri()->getPath(), ' /');
@@ -144,7 +155,7 @@ if (PHP_SAPI == 'cli-server') {
     }
 }
 
-
+// Begin the middleware queue
 $middleware_queue = $object->new(
     Vendimia\Middleware\QueueHandler::class
 );
