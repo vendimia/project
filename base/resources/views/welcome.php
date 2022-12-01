@@ -64,14 +64,13 @@
     <p>Now, you have to do a few things more before start:</p>
 
     <ul>
-    <li>Adjust the <tt>config/default.php</tt> file to your needs (specially in the <tt>database</tt> section, if you'll use one).</li>
+    <li>Adjust the <code>config/default.php</code> file to your needs (specially in the <code>database</code> section, if you'll use one).</li>
 
-    <li>Create new modules for your project. You can use the <tt>vendimia</tt> script for this task:</li>
+    <li>Create new modules for your project. You can use the <code>vendimia</code> script for this task:</li>
 
-    <pre>
-cd <?=Vendimia\PROJECT_PATH?>
+    <pre>cd <?=Vendimia\PROJECT_PATH?>
 
-vendimia new module TheBestModule</pre>
+./vendimia new module MyModule</pre>
 
     <li>And that's it. Have fun coding!</li>
 
