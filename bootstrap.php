@@ -39,7 +39,31 @@ define ('Vendimia\\DEBUG', $config->get("debug", false));
 // Save project info in the object repository
 $project_info = $object->build(Vendimia\Core\ProjectInfo::class);
 
-// By default, CLI exception handler are used, in case there is an error
+// ========================================================================== //
+//                              LOGGER DEFINITION                             //
+// ========================================================================== //
+
+$logger = null;
+if ($config->logger) {
+    $logger = $object->build(Vendimia\Logger\Logger::class);
+
+    foreach ($config->logger as $name => $defs) {
+        if ($name == 'default') {
+            $active_logger = $logger;
+        } else {
+            $active_logger = $logger->createLogger($name);
+        }
+        foreach ($defs as $def) {
+            $active_logger->addTarget(new $def['target'], $def['level']);
+        }
+    }
+}
+
+
+// ========================================================================== //
+//                    DEFAULT ERROR AND EXCEPTION HANDLER                     //
+// ========================================================================== //
+
 // at initializing phase.
 set_exception_handler([Vendimia\Core\ExceptionHandler\Cli::class, 'handle']);
 
