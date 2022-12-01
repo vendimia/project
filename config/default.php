@@ -1,6 +1,4 @@
 <?php return [
-    'debug' => true,
-
     'session' => [
         'driver' => Vendimia\Session\Driver\Php::class,
         'options' => [
