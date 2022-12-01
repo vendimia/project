@@ -1,4 +1,8 @@
 <?php
+
+use Vendimia\ObjectManager\ObjectManager;
+use Vendimia\Core\Csrf;
+
 /**
  * Default layout.
  */
