@@ -4,6 +4,12 @@
  * Vendimia bootstrap script.
  */
 
+// Composer class autoloader
+$autoloader = require __DIR__ . '/vendor/autoload.php';
+
+// '.env' file loader for sensitive parameters
+Dotenv\Dotenv::createImmutable(__DIR__)->safeLoad();
+
 // Project path
 define ('Vendimia\\PROJECT_PATH', __DIR__);
 
@@ -22,12 +28,6 @@ define ('Vendimia\\PUBLIC_PATH',
 // URL for public files
 define ('Vendimia\\PUBLIC_URL',
     $_ENV['VENDIMIA_PUBLIC_URL'] ?? Vendimia\WEB_ROOT . '/public');
-
-// Composer class autoloader
-$autoloader = require __DIR__ . '/vendor/autoload.php';
-
-// '.env' file loader for sensitive parameters
-Dotenv\Dotenv::createImmutable(__DIR__)->safeLoad();
 
 // Object repository
 $object = new Vendimia\ObjectManager\ObjectManager;
