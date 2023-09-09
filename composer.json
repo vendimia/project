@@ -16,6 +16,7 @@
         "vlucas/phpdotenv": "^5.4",
         "vendimia/database": "^0.1.42",
         "vendimia/form": "^0.1.18",
-        "vendimia/logger": "^0.0.6"
+        "vendimia/logger": "^0.1.0",
+        "vendimia/datetime": "^0.1.7"
     }
 }
