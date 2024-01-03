@@ -84,8 +84,6 @@ if ($logger) {
     $exception_handler->setLogger($logger);
 }
 
-
-
 // Build and save the Vendimia resource locator class
 $resource_locator = $object->save(
     $object->new(Vendimia\Core\ResourceLocator::class),
@@ -101,6 +99,7 @@ $object->bind(
     $config->session['driver']
 );
 $session = $object->build(Vendimia\Session\SessionManager::class);
+$session->initialize('vendimia-session', $config->session['options']);
 
 // CSRF token
 $object->build(Vendimia\Core\Csrf::class);
