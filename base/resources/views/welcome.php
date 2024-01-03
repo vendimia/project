@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
-    You can delete this file. Remember to remove the routing rule from
-    config/default.php
+    You can delete this file. Remember to change or remove the 'welcome' routing
+    rule from routes/main.php also.
 -->
 <html>
 <head>
@@ -32,6 +32,11 @@
             padding: 5px;
             border-radius: 5px;
         }
+        code {
+            border:1px solid #CFC;
+            background-color: #F8FFF8;
+            padding: 1px;
+        }
     </style>
     <title>Welcome to your new Vendimia project</title>
 </head>
@@ -59,23 +64,32 @@
         </svg>
     </header>
 
-    <div class="container">
+    <section class="container">
     <h1>Welcome to your new Vendimia project</h1>
-    <p>Now, you have to do a few things more before start:</p>
-
-    <ul>
-    <li>Adjust the <code>config/default.php</code> file to your needs (specially in the <code>database</code> section, if you'll use one).</li>
-
-    <li>Create new modules for your project. You can use the <code>vendimia</code> script for this task:</li>
+    <p>Now, create modules for your project:</p>
 
     <pre>cd <?=Vendimia\PROJECT_PATH?>
 
 ./vendimia new module MyModule</pre>
 
-    <li>And that's it. Have fun coding!</li>
+    <p>This will create a module directory structure in <code>modules/MyModule</code>
+        and add a route <code>ANY /mymodule</code> in <code>routes/main.php</code>
+        to controller <code>modules/MyModule/Controller/DefaultController.php</code>.</p>
 
+    <p>A few things to consider:</p>
+
+    <ul>
+        <li>Change the <code>Rule::default()</code> rule in
+            <code>route/main.php</code> to show another view instead of this.</li>
+
+        <li>Adjust the <code>config/default.php</code> file to your needs,
+        specially in the <code>database</code> section, if you'll use another
+        than the pre-configured SQLite.</li>
     </ul>
-    </div>
+
+    <p>Have fun coding!</p>
+
+    </section>
 
 </body>
 </html>
