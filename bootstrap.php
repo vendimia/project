@@ -27,7 +27,7 @@ define ('Vendimia\\PUBLIC_PATH',
 
 // URL for public files
 define ('Vendimia\\PUBLIC_URL',
-    $_ENV['VENDIMIA_PUBLIC_URL'] ?? Vendimia\WEB_ROOT . '/public');
+    $_ENV['VENDIMIA_PUBLIC_URL'] ?? trim(Vendimia\WEB_ROOT, '/') . '/public');
 
 // Object repository
 $object = new Vendimia\ObjectManager\ObjectManager;
